@@ -3,9 +3,9 @@ import feedparser
 import asyncio
 import os
 
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-DISCORD_CHANNEL_ID = int(os.getenv("DISCORD_CHANNEL_ID"))
-YOUTUBE_FEED_URL = os.getenv("YOUTUBE_FEED_URL")
+DISCORD_TOKEN = os.getenv("token.env")
+DISCORD_CHANNEL_ID = int("os.getenv(995102313117122720"))
+YOUTUBE_FEED_URL = os.getenv("https://www.youtube.com/feeds/videos.xml?channel_id=UCM513_k9-dobg3D5tuzM0hw")
 CHECK_INTERVAL = 300
 
 intents = discord.Intents.default()
