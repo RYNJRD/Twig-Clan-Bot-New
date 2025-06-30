@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Environment variable files (contains your Discord token)
+.env
+.env.*
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# VS Code config (optional)
+.vscode/
