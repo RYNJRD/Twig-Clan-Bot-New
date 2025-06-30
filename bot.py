@@ -4,7 +4,7 @@ import asyncio
 import os
 
 DISCORD_TOKEN = os.getenv("token.env")
-DISCORD_CHANNEL_ID = int("os.getenv(995102313117122720"))
+DISCORD_CHANNEL_ID = 995182313117172278
 YOUTUBE_FEED_URL = os.getenv("https://www.youtube.com/feeds/videos.xml?channel_id=UCM513_k9-dobg3D5tuzM0hw")
 CHECK_INTERVAL = 300
 
