@@ -3,13 +3,10 @@ import feedparser
 import asyncio
 import os
 
-DISCORD_TOKEN = os.getenv("token.env")
-DISCORD_CHANNEL_ID = 995182313117172278
-YOUTUBE_FEED_URL = os.getenv("https://www.youtube.com/feeds/videos.xml?channel_id=UCM513_k9-dobg3D5tuzM0hw")
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+DISCORD_CHANNEL_ID = int(os.getenv("DISCORD_CHANNEL_ID"))
+YOUTUBE_FEED_URL = os.getenv("YOUTUBE_FEED_URL")
 CHECK_INTERVAL = 300
-
-intents = discord.Intents.default()
-client = discord.Client(intents=intents)
 
 last_video_id = None
 
@@ -31,13 +28,19 @@ async def check_youtube():
             last_video_id = video_id
             title = latest_entry.title
             url = latest_entry.link
-            await channel.send(f"📢 **New YouTube Video!**\n**{title}**\n{url}")
+            await channel.send(f"**New YouTube Video!**\n**{title}**\n{url}")
 
         await asyncio.sleep(CHECK_INTERVAL)
+
+class MyClient(discord.Client):
+    async def setup_hook(self):
+        self.loop.create_task(check_youtube())
+
+intents = discord.Intents.default()
+client = MyClient(intents=intents)
 
 @client.event
 async def on_ready():
     print(f"✅ Logged in as {client.user}")
 
-client.loop.create_task(check_youtube())
 client.run(DISCORD_TOKEN)
