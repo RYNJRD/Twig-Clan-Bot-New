@@ -1,46 +1,58 @@
 import discord
+from discord.ext import commands
 import feedparser
 import asyncio
 import os
 
-TOKEN = os.getenv("DISCORD_TOKEN")
-DISCORD_CHANNEL_ID = 995102313117122720
-YOUTUBE_FEED_URL = https://www.youtube.com/feeds/videos.xml?channel_id=UCM513_k9-dobg3D5tuzM0hw 
-CHECK_INTERVAL = 300
+# Load from environment variables (set these in Railway)
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+YOUTUBE_FEED_URL = os.getenv("YOUTUBE_FEED_URL")
+DISCORD_CHANNEL_ID = int(os.getenv("DISCORD_CHANNEL_ID"))
 
+# Global to store last video ID
 last_video_id = None
 
-async def check_youtube():
-    global last_video_id
-    await client.wait_until_ready()
-    channel = client.get_channel(DISCORD_CHANNEL_ID)
-
-    while not client.is_closed():
-        feed = feedparser.parse(YOUTUBE_FEED_URL)
-        if not feed.entries:
-            await asyncio.sleep(CHECK_INTERVAL)
-            continue
-
-        latest_entry = feed.entries[0]
-        video_id = latest_entry.yt_videoid
-
-        if video_id != last_video_id:
-            last_video_id = video_id
-            title = latest_entry.title
-            url = latest_entry.link
-            await channel.send(f"**New YouTube Video!**\n**{title}**\n{url}")
-
-        await asyncio.sleep(CHECK_INTERVAL)
-
-class MyClient(discord.Client):
-    async def setup_hook(self):
-        self.loop.create_task(check_youtube())
-
 intents = discord.Intents.default()
-client = MyClient(intents=intents)
 
-@client.event
+# Custom bot class with setup_hook for async task launching
+class MyBot(commands.Bot):
+    async def setup_hook(self):
+        self.loop.create_task(self.check_youtube())
+
+    async def check_youtube(self):
+        global last_video_id
+        await self.wait_until_ready()
+        channel = self.get_channel(DISCORD_CHANNEL_ID)
+
+        while not self.is_closed():
+            try:
+                feed = feedparser.parse(YOUTUBE_FEED_URL)
+
+                if feed.entries:
+                    latest_video = feed.entries[0]
+                    video_id = latest_video.yt_videoid
+                    video_url = latest_video.link
+                    video_title = latest_video.title
+
+                    if video_id != last_video_id:
+                        last_video_id = video_id
+                        if channel:
+                            await channel.send(f"📢 **New video uploaded!**\n**{video_title}**\n{video_url}")
+                        else:
+                            print("⚠️ Channel not found. Check DISCORD_CHANNEL_ID.")
+                else:
+                    print("⚠️ No videos found in RSS feed.")
+
+            except Exception as e:
+                print(f"Error checking YouTube feed: {e}")
+
+            await asyncio.sleep(60)  # check every 60 seconds
+
+# Initialize the bot
+bot = MyBot(command_prefix="!", intents=intents)
+
+@bot.event
 async def on_ready():
-    print(f"✅ Logged in as {client.user}")
+    print(f"✅ Bot is online! Logged in as {bot.user}")
 
-client.run(DISCORD_TOKEN)
+bot.run(DISCORD_TOKEN)
