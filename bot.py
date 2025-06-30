@@ -3,7 +3,7 @@ import feedparser
 import asyncio
 import os
 
-TOKEN = os.getenv('DISCORD_TOKEN')
+TOKEN = os.getenv("DISCORD_TOKEN")
 DISCORD_CHANNEL_ID = 995102313117122720
 YOUTUBE_FEED_URL = https://www.youtube.com/feeds/videos.xml?channel_id=UCM513_k9-dobg3D5tuzM0hw 
 CHECK_INTERVAL = 300
