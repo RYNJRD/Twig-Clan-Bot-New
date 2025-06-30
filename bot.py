@@ -4,17 +4,14 @@ import feedparser
 import asyncio
 import os
 
-# Load from environment variables (set these in Railway)
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 YOUTUBE_FEED_URL = os.getenv("YOUTUBE_FEED_URL")
 DISCORD_CHANNEL_ID = int(os.getenv("DISCORD_CHANNEL_ID"))
 
-# Global to store last video ID
 last_video_id = None
 
 intents = discord.Intents.default()
 
-# Custom bot class with setup_hook for async task launching
 class MyBot(commands.Bot):
     async def setup_hook(self):
         self.loop.create_task(self.check_youtube())
@@ -46,9 +43,8 @@ class MyBot(commands.Bot):
             except Exception as e:
                 print(f"Error checking YouTube feed: {e}")
 
-            await asyncio.sleep(60)  # check every 60 seconds
+            await asyncio.sleep(60)
 
-# Initialize the bot
 bot = MyBot(command_prefix="!", intents=intents)
 
 @bot.event
